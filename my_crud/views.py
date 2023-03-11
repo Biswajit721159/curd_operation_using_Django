@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,HttpResponse
 from my_crud.models import Employee
 
 def Index(request):
@@ -52,3 +52,24 @@ def edit(request,id):
 
         member.save()
     return redirect('/')
+ 
+def search(request):
+    if request.method=="GET":
+        data=request.GET.get('name')
+        # emp=Employee.objects.filter(phone=data)
+        # context={'emp':emp}
+        emp=Employee.objects.all()
+        res=[]
+        count=0
+        for i in emp:
+            if i.email==data:
+                res.append(i)
+                count+=1
+        if count==0:
+            for i in emp:
+                if str(i.phone)==str(data):
+                    res.append(i)
+        context={'emp':res}                    
+        return render(request,"index.html",context)
+    else:    
+        return HttpResponse("Something is Wrong")
